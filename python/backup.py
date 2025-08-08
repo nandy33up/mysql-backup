@@ -62,7 +62,7 @@ class Backup:
 
     def filter(self, name: str):
         # 备份过滤
-        raise
+        return name.endswith(self.file_type) and len(name.split('_')) == len(self.name_tpl.split('_'))
 
     @property
     def history(self):
@@ -129,9 +129,6 @@ class DataBackup(Backup):
                 return name.replace(self.file_type, '')
         return ''
 
-    def filter(self, name: str) -> bool:
-        return name.endswith(self.file_type) and len(name.split('_')) == 4
-
 
 class LogsBackup(Backup):
     def __init__(self, bak_dir: str, keep: int, dry_run: bool, log_bin: str):
@@ -178,6 +175,3 @@ class LogsBackup(Backup):
         if len(self.history):
             return self.history[-1].replace(self.file_type, '')
         return ''
-
-    def filter(self, name: str) -> bool:
-        return name.endswith(self.file_type) and len(name.split('_')) == 3

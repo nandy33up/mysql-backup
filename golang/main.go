@@ -18,11 +18,11 @@ var (
 
 func init() {
 	parser = argparse.NewParser("mysql_backup", strings.Join([]string{
-		"MySQL周度全量、增量、日志备份，使用xtrabackup+zstd最佳组合，Version=v2.0.1",
+		"MySQL周度全量、增量、日志备份，使用xtrabackup+zstd最佳组合，Version=v2.1.0",
 		"数据备份：mysql_backup --bak-mode=0 --bak-dir=/backup --weekday=7 --my-cnf=/etc/my.cnf",
 		"日志备份：mysql_backup --bak-mode=1 --bak-dir=/backup --log-bin=/var/lib/mysql/mysql-bin",
 		"混合备份：mysql_backup --bak-mode=2 --bak-dir=/backup --weekday=7 --my-cnf=/etc/my.cnf --log-bin=/var/lib/mysql/mysql-bin",
-	}, "\n"), &argparse.ParserConfig{DisableDefaultShowHelp: true})
+	}, "\n"), &argparse.ParserConfig{DisableDefaultShowHelp: true, WithHint: true})
 	bakMode := parser.Int("", "bak-mode", &argparse.Option{Group: "基础备份选项", Help: "0=数据，1=日志，2=数据+日志", Default: "0"})
 	bakDir := parser.String("", "bak-dir", &argparse.Option{Group: "基础备份选项", Help: "备份文件目录", Default: ""})
 	keep := parser.Int("", "keep", &argparse.Option{Group: "基础备份选项", Help: "保留几周(>=1)", Default: "2"})
@@ -32,7 +32,8 @@ func init() {
 	myCnf := parser.String("", "my-cnf", &argparse.Option{Group: "数据备份选项", Help: "配置文件路径", Default: "/etc/my.cnf"})
 	executor := parser.String("", "executor", &argparse.Option{Group: "数据备份选项", Help: "可执行文件：mariabackup, /usr/bin/xtrabackup", Default: "xtrabackup"})
 
-	logBin := parser.String("", "log-bin", &argparse.Option{Group: "日志备份选项", Help: "日志文件路径 show variables like 'log_bin_basename'", Default: ""})
+	logBin := parser.String("", "log-bin", &argparse.Option{Group: "日志备份选项", Help: "日志文件路径 show variables like 'log_bin_basename'", Default: "/var/lib/mysql/mysql-bin"})
+
 	err := parser.Parse(func() (args []string) {
 		for _, arg := range os.Args[1:] {
 			args = append(args, strings.Split(arg, "=")...)

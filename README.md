@@ -9,7 +9,7 @@ weekly mysql data(full+incr)/logs backup using xtrabackup
 # 可直接下载 Releases 可执行文件
 cd golang/
 # 编译
-go build -ldflags '-s'
+go build -ldflags '-s -w'
 # 安装
 cp mysql_backup /usr/bin/mysql_backup
 ```
@@ -32,7 +32,7 @@ $ mysql_backup -h
 
 usage: mysql_backup [-h] [--bak-mode BAK_MODE] [--bak-dir BAK_DIR] [--keep KEEP] [--weekday WEEKDAY] [--my-cnf MY_CNF] [--executor EXECUTOR] [--log-bin LOG_BIN]
 
-MySQL周度全量、增量、日志备份，使用xtrabackup+zstd最佳组合，Version=v2.0.1
+MySQL周度全量、增量、日志备份，使用xtrabackup+zstd最佳组合，Version=v2.1.0
 数据备份：mysql_backup --bak-mode=0 --bak-dir=/backup --weekday=7 --my-cnf=/etc/my.cnf
 日志备份：mysql_backup --bak-mode=1 --bak-dir=/backup --log-bin=/var/lib/mysql/mysql-bin
 混合备份：mysql_backup --bak-mode=2 --bak-dir=/backup --weekday=7 --my-cnf=/etc/my.cnf --log-bin=/var/lib/mysql/mysql-bin
@@ -42,7 +42,7 @@ options:
 
 基础备份选项:
   --bak-mode BAK_MODE  0=数据，1=日志，2=数据+日志 (default: 0)
-  --bak-dir BAK_DIR    备份文件目录 (default: None)
+  --bak-dir BAK_DIR    备份文件目录
   --keep KEEP          保留几周(>=1) (default: 2)
   --dry-run            打印命令而不实际执行  
 
@@ -52,7 +52,7 @@ options:
   --executor EXECUTOR  可执行文件：mariabackup, /usr/bin/xtrabackup (default: xtrabackup)
 
 日志备份选项:
-  --log-bin LOG_BIN    日志读取路径，show variables like 'log_bin_basename' (default: None)
+  --log-bin LOG_BIN    日志读取路径，show variables like 'log_bin_basename' (default: /var/lib/mysql/mysql-bin)
 ```
 
 ## 定时

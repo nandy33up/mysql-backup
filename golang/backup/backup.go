@@ -41,7 +41,6 @@ type Backup struct {
 	fileType string
 	nameTpl  string
 
-	filter        func(string) bool
 	getLastName   func() string
 	getBackupType func() string
 	backupCmd     func()
@@ -83,13 +82,14 @@ func (backup *Backup) getHistory() (names []string) {
 	return
 }
 
+func (backup *Backup) filter(name string) bool {
+	return strings.HasSuffix(name, backup.fileType) && len(strings.Split(name, "_")) == len(strings.Split(backup.nameTpl, "_"))
+}
+
 func NewDataBackup(backup *Backup) *Backup {
 	backup.baseDir = filepath.Join(backup.BakDir, "data")
 	backup.fileType = ".xb.zst"
 	backup.nameTpl = "%s_%s_%s_%s" + backup.fileType
-	backup.filter = func(name string) bool {
-		return strings.HasSuffix(name, backup.fileType) && len(strings.Split(name, "_")) == 4
-	}
 	backup.getLastName = func() string {
 		for _, name := range slices.Backward(backup.getHistory()) {
 			if strings.Contains(name, backupType.full) {
@@ -155,9 +155,6 @@ func NewLogsBackup(backup *Backup) *Backup {
 	backup.baseDir = filepath.Join(backup.BakDir, "logs")
 	backup.fileType = ".zst"
 	backup.nameTpl = "%s_%s_%s" + backup.fileType
-	backup.filter = func(name string) bool {
-		return strings.HasSuffix(name, backup.fileType) && len(strings.Split(name, "_")) == 3
-	}
 	backup.getLastName = func() string {
 		if history := backup.getHistory(); history != nil {
 			return strings.Replace(history[len(history)-1], backup.fileType, "", 1)

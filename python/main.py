@@ -8,7 +8,7 @@ from backup import DataBackup, LogsBackup
 def parse_args(argv):
     parser = ArgumentParser(
         description='\n'.join([
-            'MySQL周度全量、增量、日志备份，使用xtrabackup+zstd最佳组合，Version=v2.0.1',
+            'MySQL周度全量、增量、日志备份，使用xtrabackup+zstd最佳组合，Version=v2.1.0',
             '数据备份：mysql_backup --bak-mode=0 --bak-dir=/backup --weekday=7 --my-cnf=/etc/my.cnf',
             '日志备份：mysql_backup --bak-mode=1 --bak-dir=/backup --log-bin=/var/lib/mysql/mysql-bin',
             '混合备份：mysql_backup --bak-mode=2 --bak-dir=/backup --weekday=7 --my-cnf=/etc/my.cnf --log-bin=/var/lib/mysql/mysql-bin',
@@ -25,7 +25,8 @@ def parse_args(argv):
     data_group.add_argument('--my-cnf', dest='my_cnf', type=str, default='/etc/my.cnf', help='配置文件路径')
     data_group.add_argument('--executor', dest='executor', type=str, default='xtrabackup', help='可执行文件：mariabackup, /usr/bin/xtrabackup')
     logs_group = parser.add_argument_group(title='日志备份选项')
-    logs_group.add_argument('--log-bin', dest='log_bin', type=str, help="日志读取路径，show variables like 'log_bin_basename'")
+    logs_group.add_argument('--log-bin', dest='log_bin', type=str, default='/var/lib/mysql/mysql-bin', help="日志读取路径，show variables like 'log_bin_basename'")
+
     args = parser.parse_args(argv)
     return parser, args
 

@@ -1,2 +1,8 @@
 github.com/hellflame/argparse v1.12.0 h1:npwhdFxX5UWSg4tOZCgLPJ7W5tnCvhUyibp2JOReKzM=
 github.com/hellflame/argparse v1.12.0/go.mod h1:nOtOQAtkWh6u5msq6huJxZtjb+Yg9VeN0e7vRuBS49E=
+github.com/hellflame/argparse v1.12.2 h1:h3RUZDKB59UOZV7ARduLzYTwJrUwl4WGlR5opDRI69Q=
+github.com/hellflame/argparse v1.12.2/go.mod h1:w3NUbbFQE6S75bkFfL8PL5/3fVNIHthHVI1cR7tjvC4=
+golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1 h1:SrN+KX8Art/Sf4HNj6Zcz06G7VEz+7w9tdXTPOZ7+l4=
+golang.org/x/sys v0.0.0-20210615035016-665e8c7367d1/go.mod h1:oPkhp1MJrh7nUepCBck5+mAzfO9JrbApNNgaTdGDITg=
+golang.org/x/term v0.1.0 h1:g6Z6vPFA9dYBAF7DWcH6sCcOntplXsDKcliusYijMlw=
+golang.org/x/term v0.1.0/go.mod h1:jbD1KX2456YbFQfuXm/mYQcufACuNUgVhRMnK/tPxf8=
