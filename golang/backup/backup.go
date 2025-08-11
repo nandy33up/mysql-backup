@@ -109,21 +109,24 @@ func NewDataBackup(backup *Backup) *Backup {
 	}
 	backup.backupCmd = func() {
 		tmpName := filepath.Join(backup.baseDir, "tmp_backup"+backup.fileType)
+		args := []string{backup.Executor, fmt.Sprintf("--defaults-file=%s", backup.MyCnf), "--backup", "--parallel=4", "--stream=xbstream", "--target-dir=/tmp"}
 		f, t := "0", ""
 		if backup.getBackupType() == backupType.incr {
 			f = strings.Split(backup.getLastName(), "_")[3]
+			args = append(args, fmt.Sprintf("--incremental-lsn=%s", f))
 		}
-		args := []string{backup.Executor, fmt.Sprintf("--defaults-file=%s", backup.MyCnf), "--backup", "--parallel=4", "--stream=xbstream", "--target-dir=/tmp", fmt.Sprintf("--incremental-lsn=%s", f), "|", "zstd", "-fkT4", "-o", tmpName}
-		cmd := exec.Command("bash", "-c", strings.Join(args, " "))
-		stdout, _ := cmd.StdoutPipe()
-		cmd.Stderr = cmd.Stdout
-		fmt.Println(time.Now().Format(time.DateTime), "EXECUTE:", strings.Join(args, " "))
+		args = append(args, "|", "zstd", "-fkT4", "-o", tmpName)
+		cmd := strings.Join(args, " ")
+		fmt.Println(time.Now().Format(time.DateTime), "EXECUTE:", cmd)
 		if backup.DryRun {
 			return
 		}
-		if err := cmd.Start(); err != nil {
+		shell := exec.Command("bash", "-c", cmd)
+		stdout, _ := shell.StdoutPipe()
+		shell.Stderr = shell.Stdout
+		if err := shell.Start(); err != nil {
 			fmt.Println(err.Error())
-			return
+			os.Exit(1)
 		}
 		reader := bufio.NewReader(stdout)
 		for {

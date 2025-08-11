@@ -79,10 +79,13 @@ class DataBackup(Backup):
 
     def backup_cmd(self):
         tmp_name = os.path.join(self.base_dir, 'tmp_backup' + self.file_type)
+        args = [self.executor, f'--defaults-file={self.my_cnf}', '--backup', '--parallel=4', '--stream=xbstream', '--target-dir=/tmp']
         f, t = '0', ''
         if self.backup_type == BackupType.incr:
             f = self.get_last_name().split('_')[3]
-        cmd = f'{self.executor} --defaults-file={self.my_cnf} --backup --parallel=4 --stream=xbstream --target-dir=/tmp --incremental-lsn={f} | zstd -fkT4 -o {tmp_name}'
+            args.append(f'--incremental-lsn={f}')
+        args += ['|', 'zstd', '-fkT4', '-o', tmp_name]
+        cmd = ' '.join(args)
         print(datetime.datetime.now(), 'execute', cmd, flush=True)
         if self.dry_run:
             return
@@ -96,11 +99,11 @@ class DataBackup(Backup):
                 break
         if t == '':
             os.remove(tmp_name)
-            print(datetime.datetime.now(), 'FAILURE', tmp_name, flush=True)
+            print(datetime.datetime.now(), 'FAILURE:', tmp_name, flush=True)
             sys.exit(1)
         bak_name = os.path.join(self.base_dir, self.name_tpl.format(date=TODAY.strftime(FORMAT), type=self.backup_type, f=f, t=t))
         os.rename(tmp_name, bak_name)
-        print(datetime.datetime.now(), 'SUCCESS', bak_name, flush=True)
+        print(datetime.datetime.now(), 'SUCCESS:', bak_name, flush=True)
 
     @property
     def base_dir(self):
